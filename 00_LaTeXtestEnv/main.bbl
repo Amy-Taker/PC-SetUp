@@ -1,0 +1,30 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This bbl file is created by jecon.bst ver.5.4
+%  The latest jecon.bst is available at
+%  <http://shirotakeda.org/ja/tex-ja/jecon-ja.html>
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{thebibliography}{xxx}
+
+
+\harvarditem[吉田他]{吉田・佐藤・中野・岡田・天谷・伊藤・篠田}{2022}{yoshida2022}
+吉田　寛・佐藤　優・中野　玄・岡田　享大・天谷　武琉・伊藤　咲耶・篠田　穂
+  (2022). 「2030 松崎ゴール s 1.0」
+  の決定とプロジェクトチームの始動:「松崎ミライ通信」
+  から見る 2030
+  松崎プロジェクト　静岡大学地域創造教育研究= Bulletin of
+  the Education Center for Regional Studies Shizuoka
+  University，\textit{3}，31--47．
+
+\harvarditem[天谷他]{天谷・由井・森田・光田・東中・竹内}{2022}{amaya2022}
+天谷　武琉・由井　達也・森田　純哉・光田　航・東中　竜一郎・竹内　勇剛
+  (2022).
+  対話での共通基盤の形成過程における認知状態の推定　人工知能学会研究会資料
+  言語・音声理解と対話処理研究会 第 96 回
+  (2022.12)，17，一般社団法人 人工知能学会．
+
+\end{thebibliography}
+

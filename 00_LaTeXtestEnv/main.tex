@@ -1,0 +1,414 @@
+%!TEX program = lualatex
+
+%%=============================================================================
+% TeXテンプレート (for LuaLaTeX)
+%%=============================================================================
+
+%%-----------------------------------------------------------------------------
+% クラス宣言おまじない
+%%-----------------------------------------------------------------------------
+\documentclass[10pt, a4j, titlepage]{ltjsarticle}
+% \documentclass[twocolumn,a4j]{ltjsarticle}
+% \documentclass[twocolumn,8pt,a4j]{ltjsarticle}
+
+% 10pt: [文字大きさ]
+% a4j: [用紙大きさ] A4判、a4paperより余白が狭い
+% twocolumn: [段組み] 2段
+% ltjsarticle: [ドキュメントクラス]
+
+% ⟨article⟩ ltjsarticle.cls 論文・レポート用
+% ⟨book⟩    ltjsbook.cls    書籍用
+% ⟨report⟩  ltjsreport.cls  レポート用
+% ⟨jspf⟩    ltjspf.cls      某学会誌用
+% ⟨kiyou⟩   ltjskiyou.cls   某紀要用
+
+% \usepackage[dvips]{graphicx,epsfig} %for eps
+% \usepackage[dvipdfmx]{graphicx}
+% lualatexはdvi不使用
+
+
+%%-----------------------------------------------------------------------------
+% 前提パッケージ
+%%-----------------------------------------------------------------------------
+\usepackage{luatex85,luatexja}
+\usepackage[unicode,hidelinks,pdfusetitle,bookmarks=false]{hyperref}
+\usepackage{graphicx, xcolor}
+\usepackage{url}
+\usepackage{comment}
+% \usepackage{luacode}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{subfiles}
+\usepackage{textcomp}
+% \usepackage{titlesec, titletoc}
+
+% luatex85: 色々入ってるっぽい
+% luatexja: 日本語処理するやつ(https://ja.osdn.net/projects/luatex-ja/wiki/FrontPage)
+% hyperref: ハイパーリンクつけるやつ(https://texwiki.texjp.org/?hyperref)
+% graphicx: 画像関連(https://texwiki.texjp.org/?graphicx)lualatexはドライバオプション指定不要(https://qiita.com/zr_tex8r/items/ac9176e4611bf233a3e0)
+% xcolor: 色分けするやつ(http://abenori.blogspot.com/2015/12/xcolor.html)
+% comment: 複数行のコメントアウト(https://medemanabu.net/latex/comment/)
+% % luacode: LuaLaTeX文書中にLuaコードを書く(https://qiita.com/zr_tex8r/items/af2905bc93ac2c936a67)
+% booktabs: テーブルに横罫線を引く(http://osksn2.hep.sci.osaka-u.ac.jp/~naga/miscellaneous/tex/tex-tips3.html)
+% multirow: テーブル行を結合する
+%% table関連 : (https://zenn.dev/ganariya/articles/latex-multi-row-and-column)(https://qiita.com/alphalia/items/5ab6c9403b3c7453ef55)
+% subfiles: 分割した LaTeX ファイルをコンパイルする(https://qiita.com/sankichi92/items/1e113fcf6cc045eb64f7)
+% textcomp: 特殊文字関連(http://www.yamamo10.jp/yamamoto/comp/latex/make_doc/symbol/index.php)
+% % titlesec: 各種見出しの見た目を変更するパッケージ(http://abenori.blogspot.com/2018/05/titlesec.html)
+% % titletoc: 目次の見た目を変更するパッケージ(http://abenori.blogspot.com/2018/05/titletoc.html)
+
+% \paragraphの最初に出るマークを「■」に固定されててウザいので
+% 同じ考えの人は多く(https://github.com/texjporg/jsclasses/issues/42)
+% このマークを変更可能にするためのマクロがあるっぽいので(http://mirrors.ibiblio.org/CTAN/macros/luatex/generic/luatexja/doc/ltjsclasses.pdf)従来は
+\renewcommand{\jsParagraphMark}{}
+
+\usepackage{ulem} % 打消し線
+
+% \usepackage{float}
+% 図をその場に配置する\begin{figure}[H]のように使う
+
+% memo
+% 長さの単位は 72.27pt = 1in = 25.4mm などが使われます。 
+% pt（ポイント）は一般的な定義よりわずかに小さくなっています。 
+% sp（スケールドポイント）という単位は 2の16乗分の1（=0.0000152587890625） pt で、TeX における長さの基本単位です。 
+
+
+%%-----------------------------------------------------------------------------
+%% 数式組版用パッケージ
+%%-----------------------------------------------------------------------------
+\usepackage{mathtools,amsmath,amssymb}
+\usepackage{amsthm}
+
+
+%%-----------------------------------------------------------------------------
+%% コード組版用パッケージ
+%%-----------------------------------------------------------------------------
+% \usepackage{minted}
+\usepackage[outputdir=.tmp]{minted}
+% 隠しディレクトリ`.tmp`にマークアップの中間ファイルを保存
+% \usepackage[outputdir=.tmp, cache=false]{minted}
+
+% cacheをうまく使ってくれなくてエラー
+% [参考](https://qiita.com/float168/items/2884a4d80a54ffa89a34)
+% [参考20220524](https://tex.stackexchange.com/questions/367332/minted-error-undefined-control-sequence-pyg-with-texmaker)
+
+
+\usepackage{mdframed}
+% フレームを上手くやってくれるパッケージ
+
+\definecolor{bg}{rgb}{0.95,0.95,0.95} % 色決め
+
+\newminted[myMinted]{c}{
+  fontsize=\footnotesize, %文字サイズ最小
+  breaklines=true, %折り返し
+  % bereakafter=\#, %'#'で強制改行
+  linenos=true, %行数字
+  firstnumber=1, %開始番号
+    % bgcolor=bg, %e0ffff, %lightcyan,%{224,255,255}
+    frame=lines, %枠  (none | leftline | topline | bottomline | lines | single)
+    framerule=0.1pt,
+    framesep=1mm, %枠との距離
+    % label=hoge, %枠へのlabel
+  autogobble, %先頭空白削除
+  mathescape=true, %コメントアウトの数式    
+  style=vs, %(monkai|vim|vs) 
+}
+
+% \inputminted[fontsize=\footnotesize, breaklines=true, linenos=true, frame=lines, framesep=2mm]{python}{dijkstra.py}
+\newmintedfile[myMintedfile]{c}{
+    fontsize=\footnotesize, %文字サイズ最小
+    breaklines=true, %折り返し
+    % bereakafter=\#, %'#'で強制改行
+    linenos=true, %行数字
+    firstnumber=1, %開始番号
+      bgcolor=bg, %e0ffff, %lightcyan,%{224,255,255}
+      % frame=lines, %枠  (none | leftline | topline | bottomline | lines | single)
+      % framerule=0.1pt,
+      % framesep=1mm, %枠との距離
+      % % label=hoge, %枠へのlabel
+    autogobble, %先頭空白削除
+    mathescape=true, %コメントアウトの数式    
+    style=vs, %(monkai|vim|vs) 
+}
+% % [minted参考](https://muscle-keisuke.hatenablog.com/entry/2015/11/06/182214)
+% % [manpage参考](https://ftp.kddilabs.jp/CTAN/macros/latex/contrib/minted/minted.pdf)
+% % [pygmentsStyle参考](https://help.farbox.com/pygments.html)
+
+
+%%-----------------------------------------------------------------------------
+% table対応 (pandocでmarkdownをtexにするとtableがうまく表示されない)
+%%-----------------------------------------------------------------------------
+%% 1-column mode なら longtable で
+\usepackage{longtable}
+% Package longtable Error: longtable not in 1-column mode.
+
+%% 2-column mode なら supertabular で
+% \let\endhead\@gobble %longtable環境のみ対応
+% \providecommand{\longtable}{\supertabular}
+\usepackage{supertabular}
+
+%% マクロ関連--------------------------------------------------------------------
+% \makeatletter
+%   % \let\longtable\supertabular
+%   % \let\toprule\@gobble
+%   % \let\endhead\@gobble %longtable環境のみ対応
+%   % \let\bottomrule\@gobble
+% \makeatother
+
+
+%%-----------------------------------------------------------------------------
+% おまけパッケージ
+%%-----------------------------------------------------------------------------
+% うまく動かない上にMintedと干渉する2023年4月18日
+% % \usepackage{ascmac}
+% % \usepackage{fancybox}
+% % % \usepackage{fancybx}
+% % % 文章を影枠や楕円枠などで囲んだり，頁自体を枠線で囲んだりする(http://www.yamamo10.jp/yamamoto/comp/latex/make_doc/box/box.php)
+
+\usepackage{threeparttable}
+% 表中脚注(https://qiita.com/kumamupooh/items/38795811fc6b934a950d)
+
+% % pandocの\tightliostは使えないので
+% \providecommand{\tightlist}{%
+%   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+%%-----------------------------------------------------------------------------
+% キャプション,フットマーク調整
+%%-----------------------------------------------------------------------------
+% \makeatletter
+%     \def\thefootnote{\fnsymbol{footnote}}
+% \makeatother
+
+%% 記号のfootnote好きじゃないので
+% \renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\renewcommand{\thefootnote}{(\arabic{footnote})}
+% \renewcommand{\footnotemark}{*\arabic{footnote}}
+
+% \usepackage[subrefformat=parens]{subcaption}
+\usepackage[hang,small,bf]{caption}
+\usepackage[subrefformat=parens]{subcaption}
+\captionsetup{compatibility=false}
+
+
+%%-----------------------------------------------------------------------------
+% マージン調整各種
+%%-----------------------------------------------------------------------------
+
+% \newenvironment{minilinespace}{ %部分的に行間を変更
+% 	\baselineskip = 4.5mm
+% }
+
+% set dimensions of columns, gap between columns, and paragraph indent
+\setlength{\columnsep}{2.0pc} % 二段組時のカラムの間隔
+\setlength{\textwidth}{6.5in}  % 本文の横幅
+\setlength{\headheight}{16pt}  % ヘッダーの高さ
+\setlength{\footskip}{0.6in}  % 本文とフットノートの間隔
+\setlength{\headsep}{0.6in}   % ヘッダーと本文の間隔
+\setlength{\topmargin}{0.0in} % ページの上端と本文の間隔
+\setlength{\evensidemargin}{0in}% 偶数番号ページの左マージン
+% \setlength{\parindent}{1zw}%パラグラフの始まりのインデント量の指定
+
+
+% \makeatletter  
+%   % --- sectionの調整
+%   \renewcommand{\section}{%
+%     \@startsection{section}{1}{\z@}%
+%       % {0.8\Cvs \@plus.0\Cdp \@minus.2\Cdp}%  上の空き
+%       % {0.5\Cvs \@plus.1\Cdp \@minus.3\Cdp}%  下の空き
+%       {0.9\Cvs \@plus.0\Cdp \@minus.2\Cdp}%    上の空き
+%       {0.3\Cvs \@plus.1\Cdp \@minus.3\Cdp}%    下の空き
+%       % {\reset@font\Large\bfseries}}%         字の大きさ
+%       {\reset@font\large\bfseries}%            字の大きさ
+%   }
+%   % --- subsectionの調整
+%   \renewcommand{\subsection}{%
+%     \@startsection{subsection}{1}{\z@}%
+%       {0.9\Cvs \@plus.0\Cdp \@minus.2\Cdp}%  上の空き
+%       {0.2\Cvs \@plus.1\Cdp \@minus.3\Cdp}%  下の空き
+%       % {\reset@font\large\bfseries}}%       字の大きさ
+%       {\reset@font\normalsize\bfseries}%     字の大きさ
+%   }
+%   % --- subsubsectionの調整
+%   \renewcommand{\subsubsection}{%
+%     \@startsection{subsubsection}{1}{\z@}%
+%       {0.9\Cvs \@plus.0\Cdp \@minus.2\Cdp}%  上の空き
+%       {0.2\Cvs \@plus.1\Cdp \@minus.3\Cdp}%  下の空き
+%       {\reset@font\normalsize\bfseries}  %   字の大きさ
+%   }
+%   % --- 行間の調整
+%   %ここを変えると行間が変わり、ページ数を大幅に変更できます
+%   %ページ数の調整に使って下さい。。
+%   %\def\baselinestretch{0.95}
+%   % \def\baselinestretch{1.00}
+%   %\def\baselinestretch{1.15}
+
+% \makeatother
+
+
+%%-----------------------------------------------------------------------------
+%% header, footerの内容
+%%-----------------------------------------------------------------------------
+\usepackage{fancyhdr} % ヘッダ・フッダ調整
+\pagestyle{fancy}
+
+
+\lhead{0000-0000 YourName}
+% \rhead{}
+
+\usepackage{lastpage}
+\cfoot{\arabic{page}/\pageref{LastPage}}
+% \setcounter{page}{0}
+
+% \cfoot{{\large A - \arabic{page}}}
+% %　アルファベットを各自で変更すること
+
+% \renewcommand{\headrulewidth}{0.0pt}
+
+
+%%-----------------------------------------------------------------------------
+%% BiB対応
+%%-----------------------------------------------------------------------------
+%% BiBLaTeX--------------------------------------------------------------------
+% \usepackage[backend=biber,style=numeric]{biblatex}
+% \addbibresource{refsall.bib}
+
+%% BiBTeX--------------------------------------------------------------------
+%% \citet, \citep を行うための変更
+\usepackage[longnamesfirst]{natbib}
+% \usepackage[utf8]{inputenc} 
+% \renewcommand{\refname}{引用文献}
+
+
+%%-----------------------------------------------------------------------------
+%% 他
+%%-----------------------------------------------------------------------------
+
+% \providecommand{\texdir}{./a40_graduation}
+\providecommand{\codedir}{./code}
+
+% \usepackage{filemod}
+% 打刻
+
+\begin{document}
+
+% 静岡大学情報学部○○○○学科 卒業研究
+
+%% title-----------------------------------------------------------------------
+% \title{すごいタイトル}
+% \etitle{this is English title}
+
+% \author{すごい人\thanks{すごい組織}}
+% \email{shizuoka.ac.jp}
+
+% \date{modified \FilemodToday{\jobname}\\(compile \pdffeedback creationdate)}
+% pdfTeX の実行日時 \pdfcreationdate
+
+% \date{\today}
+% \today \the\hour:\the\minute
+
+% % タイトル、概要
+% \maketitle
+
+% \begin{abstract}
+%   これはすごいアブストラクト．これはすごいアブストラクト．これはすごいアブストラクト．
+%   これはすごいアブストラクト．これはすごいアブストラクト．これはすごいアブストラクト．
+%   これはすごいアブストラクト．これはすごいアブストラクト．これはすごいアブストラクト．
+%   これはすごいアブストラクト．これはすごいアブストラクト．これはすごいアブストラクト．
+%   これはすごいアブストラクト．これはすごいアブストラクト．これはすごいアブストラクト．
+
+%   \flushleft{\textbf{Keywords:} 
+%   キーワード１; キーワード2; キーワード3; キーワード4; }
+% \end{abstract}
+
+
+%%-----------------------------------------------------------------------------
+%% 目次参考挿入
+%%-----------------------------------------------------------------------------
+
+% \twocolumn[
+  % \centering
+  % modified \FilemodToday{\jobname}(compile \pdffeedback creationdate)\\
+  % ]
+
+% % 目次
+% \setcounter{tocdepth}{3} % 目次に掲載する深さ
+% \tableofcontents
+% \listoffigures
+% \listoftables
+
+% % \maketitle
+
+% \clearpage
+
+
+%%-----------------------------------------------------------------------------
+% 本文の内容
+%%-----------------------------------------------------------------------------
+
+% \subfile{\texdir/00_abstract}
+
+\citet{amaya2022}によると〇〇ということだ\citep{yoshida2022}．
+
+\inputminted{c}{\codedir/HelloWorld.c}
+\inputminted{java}{\codedir/HelloWorld.java}
+\inputminted{python}{\codedir/HelloWorld.py}
+\inputminted{perl}{\codedir/printOS.pl}
+
+\myMintedfile{\codedir/HelloWorld.c}
+
+% \begin{myMinted}
+%   #include <stdio.h>
+
+%   void main() {
+%     printf("Hello World\n");
+%   }
+% \end{myMinted}
+
+% \begin{listing}
+%   \begin{minted}[linenos,
+%          mathescape,
+%          numbersep=5pt,
+%          frame=lines,
+%          framesep=2mm,
+%          bgcolor=bg]{c}
+%   #include<stdio.h>
+%   int main(void){
+%       int k=0;
+%       int x=0;
+%       // This code mean \sum_{k=0}^{100} k^2+2k+1
+%       for(k=0;k<100;++k){
+%           x=k*k + 2*k +1;
+%       }
+%       printf("x=%d\n");
+%       return 0;
+%   }
+%   \end{minted}
+% \caption{mintedの例}
+% \label{lst:example}
+% \end{listing}
+
+
+% cognition+interaction=communication
+
+%%-----------------------------------------------------------------------------
+%% BiB対応
+%%-----------------------------------------------------------------------------
+%% BiBLaTeX--------------------------------------------------------------------
+% \printbibliography
+
+%% BiBTeX----------------------------------------------------------------------
+\bibliography{
+  % ./refsall_ja-meisei, 
+  ref00
+  } %.bibから拡張子を外した名前
+
+\bibliographystyle{jecon_jpa-fix} %参考文献出力スタイル
+% % plain(En)	jplain(Ja)	参考文献をアルファベット順で出力する
+% % unsrt(En)	junsrt(Ja)	参考文献を引用された順で出力する
+% % 参考:【LaTeX】BibTeXのスタイル76個一覧(https://mathlandscape.com/latex-bibstyles/)
+
+% \nocite{*}
+% bibファイルの中身を全てリスト化する
+
+\end{document}
